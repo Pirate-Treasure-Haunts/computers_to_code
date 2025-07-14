@@ -1,0 +1,94 @@
+
+===================================================================================
+ TERMINAL GOD COMMANDS - Ultimate Control, Kill Spells, Permissions, Port Tricks
+===================================================================================
+
+SECTION 1: SCRIPT PERMISSIONS (Linux/WSL)
+------------------------------------------
+ Make All Scripts Executable:
+    chmod +x *.sh *.py
+
+ Make Specific Script Executable:
+    chmod +x deploy.sh
+    chmod +x proxy-test-app.py
+
+ Verify Permissions:
+    ls -la *.sh *.py
+
+
+SECTION 2: ESCALATING KILL SPELLS
+-----------------------------------
+ Polite Kill (Ask nicely):
+    sudo kill PID
+
+ Firm Kill (Standard terminate):
+    sudo kill -TERM PID
+
+ Aggressive Kill (Force terminate):
+    sudo kill -9 PID
+
+ Kill by Process Group:
+    sudo kill -9 -PGID
+
+ Kill All by Name:
+    sudo pkill -9 -f "pattern"
+
+ Annihilate Processes on Port 8080:
+    sudo lsof -t -i:8080 | xargs sudo kill -9
+
+ Fuser Nukes Port:
+    sudo fuser -k 8080/tcp
+
+ The Reaper's Touch (Regex kill):
+    sudo pkill -9 -f "8080"
+
+
+SECTION 3: PORT & NETWORK COMMANDS
+------------------------------------
+ Find Processes on Port (ss/netstat):
+    sudo ss -tulpn | grep :8080
+    sudo netstat -tulpn | grep :8080
+
+ Kill All by Port:
+    sudo ss -tulpn | grep :8080 | awk '{print $7}' | cut -d',' -f2 | cut -d'=' -f2 | xargs sudo kill -9
+
+ Bruteforce with Netstat:
+    sudo netstat -tulpn | grep :8080 | awk '{print $7}' | cut -d'/' -f1 | xargs sudo kill -9
+
+
+SECTION 4: SYSTEM RESET NUKE OPTIONS
+--------------------------------------
+ Restart Networking:
+    sudo systemctl restart networking
+
+ Full System Reboot:
+    sudo reboot
+
+
+SECTION 5: BONUS POWER TRICKS
+-------------------------------
+ View Open Files for Process:
+    sudo lsof -p PID
+
+ Show Who Listens on Ports:
+    sudo ss -tulwn
+
+ Track Resource-Hog Processes:
+    top or htop
+
+ Kill All Zombie Processes:
+    ps aux | grep 'Z' | awk '{print $2}' | xargs sudo kill -9
+
+ Watch Port in Real Time:
+    watch "ss -tulpn | grep :PORT"
+
+ Clear Terminal:
+    clear
+
+===================================================================================
+ NOTES:
+ - "PID" = Process ID (find via ps aux or ss/netstat)
+ - Escalate kills cautiously, use -9 or -KILL only when softer options fail
+ - 'fuser -k' usually works fast on stubborn ports
+ - Zombies often require parent process kill or system reboot
+===================================================================================
