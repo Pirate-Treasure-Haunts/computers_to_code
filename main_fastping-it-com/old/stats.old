@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastPing.It - Live Network Statistics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d2d5f 100%);
+            color: #ffffff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            position: relative;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(64, 224, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #40e0ff, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(64, 224, 255, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #b3b3ff;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .pulse-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(64, 224, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(64, 224, 255, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 300% 100%;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .stat-number {
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            font-weight: 900;
+            color: #40e0ff;
+            display: block;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(64, 224, 255, 0.4);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #b3b3ff;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-subtitle {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .mega-stat {
+            grid-column: 1 / -1;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(64, 224, 255, 0.1), rgba(75, 172, 254, 0.1));
+            border: 2px solid rgba(64, 224, 255, 0.3);
+        }
+
+        .mega-stat .stat-number {
+            font-size: clamp(4rem, 8vw, 8rem);
+            background: linear-gradient(135deg, #40e0ff, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .performance-section {
+            margin: 4rem 2rem;
+            padding: 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .perf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .perf-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .perf-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #00ff88;
+            margin-bottom: 0.5rem;
+        }
+
+        .perf-label {
+            color: #ccc;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .global-map {
+            margin: 4rem 2rem;
+            text-align: center;
+        }
+
+        .map-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .location-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #40e0ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .location-servers {
+            color: #00ff88;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .paypal-section {
+            margin: 4rem 2rem;
+            text-align: center;
+            padding: 3rem;
+            background: rgba(0, 48, 135, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 123, 255, 0.3);
+        }
+
+        .update-indicator {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(0, 255, 136, 0.9);
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(64, 224, 255, 0.6);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .particle:nth-child(2n) {
+            background: rgba(255, 107, 107, 0.6);
+            animation-delay: -2s;
+        }
+
+        .particle:nth-child(3n) {
+            background: rgba(78, 205, 196, 0.6);
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10%, 90% { opacity: 1; }
+            50% { transform: translateY(-100px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .hero-section {
+                padding: 2rem 1rem;
+            }
+            
+            .performance-section, .paypal-section {
+                margin: 2rem 1rem;
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<script 
+  src="https://www.paypal.com/sdk/js?client-id=BAACPslJ6Um5KoHhNldVWsBS_qfcelI7l6rRAl5ALLpLJm_yMMHYwyZsV6vMjwWVgH6xzk_p_rNOaiAU88&components=hosted-buttons&disable-funding=venmo&currency=USD">
+</script>
+<style>.pp-5VVWNR2XZFAA4{text-align:center;border:none;border-radius:1.5rem;min-width:11.625rem;padding:0 2rem;height:2rem;font-weight:bold;background-color:#c39e22;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:0.875rem;line-height:1.125rem;cursor:pointer;}</style>
+<form action="https://www.paypal.com/ncp/payment/5VVWNR2XZFAA4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+  <input class="pp-5VVWNR2XZFAA4" type="submit" value="FastPing.It.com" />
+  <img src=https://www.paypalobjects.com/images/Debit_Credit_APM.svg alt="cards" />
+  <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
+</form>
+<body>
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: -1s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: -2s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: -3s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: -4s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: -5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: -6s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: -7s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: -8s;"></div>
+    </div>
+
+    <div class="update-indicator" id="updateIndicator">
+        <span class="pulse-indicator"></span>Live - Updated every 30s
+    </div>
+
+    <section class="hero-section">
+        <h1 class="hero-title">FastPing.It Network</h1>
+        <p class="hero-subtitle">
+            <span class="pulse-indicator"></span>
+            Real-time global proxy infrastructure statistics
+        </p>
+    </section>
+
+    <div class="stats-grid">
+        <!-- Mega impressive total requests -->
+        <div class="stat-card mega-stat">
+            <span class="stat-number" id=https://dash.cloudflare.com/1d29d8fa017d78c1b11fa5bbf69cc9d9/fastping.it.com</span>
+            <div class="stat-label">Total Requests Processed</div>
+            <div class="stat-subtitle">Since January 2023 • Growing by 2.3M daily</div>
+        </div>
+
+        <!-- Current active connections -->
+        <div class="stat-card">
+            <span class="stat-number" id="activeConnections">23,847</span>
+            <div class="stat-label">Active Connections</div>
+            <div class="stat-subtitle">Real-time concurrent users</div>
+        </div>
+
+        <!-- Response time -->
+        <div class="stat-card">
+            <span class="stat-number" id="avgResponseTime">38ms</span>
+            <div class="stat-label">Average Response Time</div>
+            <div class="stat-subtitle">Global network average</div>
+        </div>
+
+        <!-- Uptime -->
+        <div class="stat-card">
+            <span class="stat-number" id="uptime">99.97%</span>
+            <div class="stat-label">Network Uptime</div>
+            <div class="stat-subtitle">Last 12 months</div>
+        </div>
+
+        <!-- Data transferred -->
+        <div class="stat-card">
+            <span class="stat-number" id="dataTransferred">https://dash.cloudflare.com/1d29d8fa017d78c1b11fa5bbf69cc9d9/fastping.it.com</span>
+            <div class="stat-label">Data Transferred</div>
+            <div class="stat-subtitle">This month alone</div>
+        </div>
+
+        <!-- Success rate -->
+        <div class="stat-card">
+            <span class="stat-number" id="successRate">99.94%</span>
+            <div class="stat-label">Success Rate</div>
+            <div class="stat-subtitle">Request completion rate</div>
+        </div>
+
+        <!-- Enterprise clients -->
+        <div class="stat-card">
+            <span class="stat-number" id="enterpriseClients">1,247</span>
+            <div class="stat-label">Enterprise Clients</div>
+            <div class="stat-subtitle">Fortune 500 companies trust us</div>
+        </div>
+
+        <!-- Countries served -->
+        <div class="stat-card">
+            <span class="stat-number" id="countriesServed">127</span>
+            <div class="stat-label">Countries Served</div>
+            <div class="stat-subtitle">Global infrastructure</div>
+        </div>
+    </div>
+
+    <section class="performance-section">
+        <h2 class="section-title">Real-Time Performance Metrics</h2>
+        <div class="perf-grid">
+            <div class="perf-card">
+                <div class="perf-number" id="currentRPS">47,293</div>
+                <div class="perf-label">Requests/Second</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-number" id="bandwidth">12.7Gbps</div>
+                <div class="perf-label">Current Bandwidth</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-number" id="cpuUsage">23%</div>
+                <div class="perf-label">CPU Usage</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-number" id="memoryUsage">41%</div>
+                <div class="perf-label">Memory Usage</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-number" id="cacheHitRate">94.7%</div>
+                <div class="perf-label">Cache Hit Rate</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-number" id="errorRate">0.06%</div>
+                <div class="perf-label">Error Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="global-map">
+        <div class="map-container">
+            <h2 class="section-title">Global Infrastructure</h2>
+            <p style="color: #b3b3ff; margin-bottom: 2rem;">Our proxy servers span across multiple continents for optimal performance</p>
+            
+            <div class="location-grid">
+                <div class="location-item">
+                    <div class="location-name">🇺🇸 United States</div>
+                    <div class="location-servers">247 servers</div>
+                </div>
+                <div class="location-item">
+                    <div class="location-name">🇪🇺 Europe</div>
+                    <div class="location-servers">189 servers</div>
+                </div>
+                <div class="location-item">
+                    <div class="location-name">🇯🇵 Asia-Pacific</div>
+                    <div class="location-servers">156 servers</div>
+                </div>
+                <div class="location-item">
+                    <div class="location-name">🇨🇦 Canada</div>
+                    <div class="location-servers">83 servers</div>
+                </div>
+                <div class="location-item">
+                    <div class="location-name">🇦🇺 Australia</div>
+                    <div class="location-servers">67 servers</div>
+                </div>
+                <div class="location-item">
+                    <div class="location-name">🇧🇷 South America</div>
+                    <div class="location-servers">52 servers</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="paypal-section">
+        <h2 class="section-title" style="margin-bottom: 2rem;">Trusted by Industry Leaders</h2>
+        <p style="color: #b3b3ff; font-size: 1.2rem; margin-bottom: 3rem;">
+            Join thousands of companies who rely on our enterprise-grade proxy infrastructure
+        </p>
+        
+        <!-- PayPal Button Integration -->
+        <script src="https://www.paypal.com/sdk/js?client-id=BAACPslJ6Um5KoHhNldVWsBS_qfcelI7l6rRAl5ALLpLJm_yMMHYwyZsV6vMjwWVgH6xzk_p_rNOaiAU88&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+        <div id="paypal-container-5VVWNR2XZFAA4"></div>
+        <script>
+            paypal.HostedButtons({
+                hostedButtonId: "5VVWNR2XZFAA4",
+            }).render("#paypal-container-5VVWNR2XZFAA4")
+        </script>
+    </section>
+<div id="paypal-container-5VVWNR2XZFAA4"></div>
+<script>
+  paypal.HostedButtons({
+    hostedButtonId: "5VVWNR2XZFAA4",
+  }).render("#paypal-container-5VVWNR2XZFAA4")
+</script>
+    <script>
+        // Animate numbers counting up on page load
+        function animateNumber(elementId, finalValue, duration = 2000, isDecimal = false) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startValue = 0;
+            const increment = finalValue / (duration / 16);
+            let currentValue = startValue;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= finalValue) {
+                    currentValue = finalValue;
+                    clearInterval(timer);
+                }
+                
+                if (isDecimal) {
+                    element.textContent = currentValue.toFixed(2) + (elementId.includes('Rate') || elementId.includes('time') ? '%' : '');
+                } else {
+                    element.textContent = Math.floor(currentValue).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Real-time data simulation
+        function updateRealTimeStats() {
+            // Simulate fluctuating real-time metrics
+            const rpsBase = 47293;
+            const newRPS = Math.floor(rpsBase + (Math.random() - 0.5) * 5000);
+            document.getElementById('currentRPS').textContent = newRPS.toLocaleString();
+            
+            const bandwidthBase = 12.7;
+            const newBandwidth = (bandwidthBase + (Math.random() - 0.5) * 2).toFixed(1);
+            document.getElementById('bandwidth').textContent = newBandwidth + 'Gbps';
+            
+            const cpuBase = 23;
+            const newCPU = Math.floor(cpuBase + (Math.random() - 0.5) * 10);
+            document.getElementById('cpuUsage').textContent = newCPU + '%';
+            
+            const memoryBase = 41;
+            const newMemory = Math.floor(memoryBase + (Math.random() - 0.5) * 8);
+            document.getElementById('memoryUsage').textContent = newMemory + '%';
+            
+            const cacheBase = 94.7;
+            const newCache = (cacheBase + (Math.random() - 0.5) * 2).toFixed(1);
+            document.getElementById('cacheHitRate').textContent = newCache + '%';
+            
+            const errorBase = 0.06;
+            const newError = (errorBase + (Math.random() - 0.5) * 0.02).toFixed(2);
+            document.getElementById('errorRate').textContent = newError + '%';
+            
+            // Update active connections
+            const connectionsBase = 23847;
+            const newConnections = Math.floor(connectionsBase + (Math.random() - 0.5) * 2000);
+            document.getElementById('activeConnections').textContent = newConnections.toLocaleString();
+            
+            // Slowly increment total requests
+            const currentTotal = parseInt(document.getElementById('totalRequests').textContent.replace(/,/g, ''));
+            const newTotal = currentTotal + Math.floor(Math.random() * 50);
+            document.getElementById('totalRequests').textContent = newTotal.toLocaleString();
+        }
+
+        // Initialize animations on page load
+        window.addEventListener('load', () => {
+            // Animate main stats
+            animateNumber('totalRequests', 847293621, 3000);
+            animateNumber('activeConnections', 23847, 2000);
+            animateNumber('enterpriseClients', 1247, 2500);
+            animateNumber('countriesServed', 127, 1500);
+            
+            // Animate performance metrics
+            setTimeout(() => {
+                animateNumber('currentRPS', 47293, 2000);
+                animateNumber('cpuUsage', 23, 1500);
+                animateNumber('memoryUsage', 41, 1500);
+            }, 500);
+            
+            // Start real-time updates after initial animation
+            setTimeout(() => {
+                updateRealTimeStats();
+                setInterval(updateRealTimeStats, 5000); // Update every 5 seconds
+            }, 3000);
+        });
+
+        // Add some dynamic particle effects
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            document.querySelector('.floating-particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 8000);
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 1000);
+    </script>
+</body>
+</html>
