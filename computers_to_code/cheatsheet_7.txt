@@ -1,0 +1,93 @@
+Windows God Commands - Process Nukes, Unlocks, Resets, Hidden Fixes
+SECTION 1: PROCESS KILL & STUCK APP FIXES
+Windows 10/11 (CMD)
+
+List processes: tasklist
+Kill by PID: taskkill /PID <pid> /F
+Kill by name: taskkill /IM <appname>.exe /F
+Kill hung apps: taskkill /FI "STATUS eq NOT RESPONDING" /F
+
+Windows 10/11 (PowerShell)
+
+List processes: Get-Process
+Kill by PID: Stop-Process -Id <pid> -Force
+Kill by name: Stop-Process -Name "<appname>" -Force
+Kill hung apps: Get-Process | Where-Object {$_.Responding -eq $false} | Stop-Process -Force
+
+SECTION 2: FILE & FOLDER UNLOCKS
+Windows 10/11 (CMD)
+
+Find locked files: handle64.exe <filename> (requires Sysinternals)
+Kill lock holder: taskkill /PID <pid> /F
+
+Windows 10/11 (PowerShell)
+
+Find locked files: Get-Process | Where-Object {$_.Modules -like "*filename*"}
+Kill lock holder: Stop-Process -Id <pid> -Force
+
+SECTION 3: SERVICE FORCE MANAGEMENT
+Windows 10/11 (CMD)
+
+Stop service: net stop <servicename>
+Force stop: sc queryex <servicename> (get PID, then taskkill /PID <pid> /F)
+Restart service: net stop <servicename> && net start <servicename>
+
+Windows 10/11 (PowerShell)
+
+Stop service: Stop-Service -Name <servicename> -Force
+Force stop: Get-Service <servicename> | Stop-Process -Id (Get-CimInstance Win32_Service -Filter "Name='<servicename>'").ProcessId -Force
+Restart service: Restart-Service -Name <servicename>
+
+SECTION 4: NETWORK RESET & PORT KILLS
+Windows 10/11 (CMD)
+
+Show listening ports: netstat -ano | findstr :port
+Kill by port: for /f "tokens=5" %p in ('netstat -ano ^| findstr :port') do taskkill /PID %p /F
+Reset adapters: netsh interface set interface "Ethernet" admin=disabled && netsh interface set interface "Ethernet" admin=enabled
+Flush DNS: ipconfig /flushdns
+
+Windows 10/11 (PowerShell)
+
+Show listening ports: Get-NetTCPConnection -State Listen
+Kill by port: Get-NetTCPConnection -LocalPort <port> | Select-Object OwningProcess | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+Reset adapters: Disable-NetAdapter -Name "Ethernet"; Enable-NetAdapter -Name "Ethernet"
+Flush DNS: Clear-DnsClientCache
+
+SECTION 5: EXTREME SYSTEM ACTIONS
+Windows 10/11 (CMD)
+
+Shutdown: shutdown /s /t 0
+Reboot: shutdown /r /t 0
+Logout: shutdown /l
+
+Windows 10/11 (PowerShell)
+
+Shutdown: Stop-Computer -Force
+Reboot: Restart-Computer -Force
+Logout: logoff
+
+SECTION 6: TROUBLESHOOTING & SNEAKY TRICKS
+Windows 10/11 (CMD)
+
+List services: sc query
+Show tasks: tasklist /v
+Kill by partial name: taskkill /FI "IMAGENAME eq *partial*" (limited)
+
+Windows 10/11 (PowerShell)
+
+List services: Get-Service
+Show tasks: Get-Process | Select-Object Name, CPU, WorkingSet
+Kill by partial name: Get-Process | Where-Object {$_.Name -like "*partial*"} | Stop-Process -Force
+
+SECTION 7: BOOT TIME UNLOCKS & RECOVERY
+Windows 10/11 (CMD)
+
+Boot safe mode: shutdown /r /o /f /t 0
+Enable admin: net user administrator /active:yes
+Reset password: net user <username> <newpassword>
+
+Windows 10/11 (PowerShell)
+
+Boot safe mode: Restart-Computer -Force -BootOption SafeMode
+Enable admin: Enable-LocalUser -Name "Administrator"
+Reset password: Set-LocalUser -Name <username> -Password (ConvertTo-SecureString "<newpassword>" -AsPlainText -Force)

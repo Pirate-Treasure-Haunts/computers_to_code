@@ -1,0 +1,55 @@
+GitHub Repository Explanation
+GitHub is platform-agnostic (web-based). Access via browser or Git CLI.
+What is a Repository?
+Cloud folder for code, docs, history. Tracks changes via Git.
+Key Files/Folders
+
+README.md: Project overview (Markdown).
+src/: Source code.
+docs/: Documentation.
+.gitignore: Ignore files (e.g., temp, secrets).
+LICENSE: Usage rules.
+
+Workflow
+All Platforms (Git CLI)
+
+Commit: git commit -m "message"
+Push: git push origin main
+Pull: git pull
+Fork: Via GitHub web; then git clone <fork-url>.</fork-url>
+
+Why Use?
+Version control, collaboration, sharing, portfolio.
+Install Git: winget (Windows), apt/pacman (Linux), brew (macOS).
+
+Modularization of Python Code
+Python modularization is cross-platform.
+Project Structure
+myproject/
+├── main.py
+├── utils/
+│   ├── init.py
+│   └── math.py
+└── models.py
+Defining Modules
+
+utils/math.py: Define functions.
+utils/init.py: from .math import add (re-export).
+
+Importing
+
+import utils.math
+from utils import add
+
+Cross-File Imports
+
+Same level: from models import User
+Subfolder: from utils.math import add
+Relative: from ..other import func
+
+Reusability
+Use init.py for exports.
+Testing
+tests/test_math.py: from utils.math import add
+Install as Package
+setup.py + pip install -e .

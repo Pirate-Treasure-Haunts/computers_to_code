@@ -1,0 +1,10 @@
+Notes
+
+Windows: Use WSL2 for Linux-like commands; requires setup (e.g., wsl --install).
+Linux/macOS: Some commands (e.g., netstat, htop, fuser) may require installation (apt install net-tools, pacman -S htop, brew install htop).
+Docker: Requires Docker Desktop on Windows/macOS, native on Linux.
+Git: Same across platforms; install via winget, apt, pacman, or brew.
+Handle.exe: Requires Sysinternals Suite for Windows file unlock commands.
+Risk Warning: Commands like kill -9, taskkill /F, or reboot can cause data loss or instability; use cautiously.
+Python: Use python3 on Linux/macOS, python on Windows (adjust per installation).
+Assembly: Windows requires link.exe (Visual Studio); Linux/macOS uses ld.

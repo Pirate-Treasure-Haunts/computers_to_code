@@ -1,0 +1,154 @@
+Unified Dev Commands - Compilers, File Ops, Navigation, Processes (C++, Rust, Python, Assembly)
+SECTION 1: COMPILERS & RUN BASICS
+Windows 10/11 (CMD/PowerShell)
+
+C++: g++ file.cpp -o prog.exe; .\prog.exe
+Rust: rustc file.rs; .\file.exe
+Python: python file.py
+Assembly: nasm -f win64 file.asm; link /subsystem:console file.obj; .\prog.exe
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+C++: g++ file.cpp -o prog; ./prog
+Rust: rustc file.rs; ./file
+Python: python3 file.py
+Assembly: nasm -f elf64 file.asm; ld file.o -o prog; ./prog
+
+SECTION 2: FILE OPERATIONS
+Windows 10/11 (CMD)
+
+List: dir
+Copy: copy <src> <dest>
+Move/rename: move <src> <dest>
+Delete: del <file>
+Make dir: mkdir <dir>
+Remove dir: rmdir <dir>
+
+Windows 10/11 (PowerShell)
+
+List: Get-ChildItem
+Copy: Copy-Item <src> -Destination <dest>
+Move/rename: Move-Item <src> -Destination <dest>
+Delete: Remove-Item <file>
+Make dir: New-Item -ItemType Directory <dir>
+Remove dir: Remove-Item <dir> -Recurse
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+List: ls -la
+Copy: cp <src> <dest>
+Move/rename: mv <src> <dest>
+Delete: rm <file>
+Make dir: mkdir <dir>
+Remove dir: rm -r <dir>
+
+SECTION 3: NAVIGATION
+Windows 10/11 (CMD)
+
+Change dir: cd <dir>
+Up one dir: cd ..
+Current dir: cd
+
+Windows 10/11 (PowerShell)
+
+Change dir: Set-Location <dir>
+Up one dir: Set-Location ..
+Current dir: Get-Location
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Change dir: cd <dir>
+Up one dir: cd ..
+Current dir: pwd
+
+SECTION 4: PROCESS & TASKS
+Windows 10/11 (CMD)
+
+List: tasklist
+Kill: taskkill /PID <pid> /F
+Monitor: tasklist /v
+Clear screen: cls
+
+Windows 10/11 (PowerShell)
+
+List: Get-Process
+Kill: Stop-Process -Id <pid> -Force
+Monitor: Get-Process | Sort-Object CPU -Descending
+Clear screen: Clear-Host
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+List: ps aux
+Kill: kill -9 <pid>
+Monitor: top or htop
+Clear screen: clear
+
+SECTION 5: SEARCHING & HELP
+Windows 10/11 (CMD)
+
+Find text: findstr "text" <file>
+Manual: help <cmd>
+Search files: dir /s <file>
+
+Windows 10/11 (PowerShell)
+
+Find text: Select-String -Path <file> -Pattern "text"
+Manual: Get-Help <cmd>
+Search files: Get-ChildItem -Recurse -Include <file>
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Find text: grep "text" <file>
+Manual: man <cmd>
+Search files: find / -name <file>
+
+SECTION 6: PACKAGE MANAGERS
+Windows 10/11 (CMD/PowerShell)
+
+System: winget install <pkg>
+Python: pip install <pkg>
+Rust: cargo build
+C++: Install MinGW or Visual Studio
+
+Linux (Debian/Ubuntu)
+
+System: apt install <pkg>
+Python: pip3 install <pkg>
+Rust: cargo build
+C++: apt install g++
+
+Linux (Arch)
+
+System: pacman -S <pkg>
+Python: pip3 install <pkg>
+Rust: cargo build
+C++: pacman -S g++
+
+macOS
+
+System: brew install <pkg> (Homebrew)
+Python: pip3 install <pkg>
+Rust: cargo build
+C++: brew install gcc
+
+SECTION 7: SHORTCUTS & ESSENTIAL KEYS
+Windows 10/11 (CMD)
+
+Cancel: Ctrl+C
+Search: Ctrl+F (not native, use PowerShell)
+Autocomplete: Tab
+Clear: cls
+
+Windows 10/11 (PowerShell)
+
+Cancel: Ctrl+C
+Search: Ctrl+R
+Autocomplete: Tab
+Clear: Clear-Host
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Cancel: Ctrl+C
+Search: Ctrl+R
+Autocomplete: Tab
+Clear: Ctrl+L

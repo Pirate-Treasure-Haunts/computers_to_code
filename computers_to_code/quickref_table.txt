@@ -1,0 +1,22 @@
+Quick Reference Table
+
+
+
+
+
+
+
+
+
+
+
+Task						CMD						PowerShell								Linux/macOS
+IP Config					ipconfig						Get-NetIPAddress						ifconfig / ip addr
+Connectivity					ping [host]					Test-Connection [host]					ping [host]
+Trace Route					tracert [host]				Test-NetConnection -TraceRoute [host]		traceroute [host]
+Processes					tasklist						Get-Process								ps aux
+Kill PID						taskkill /PID [pid]				Stop-Process -Id [pid]						kill [pid]
+System Info					systeminfo					Get-ComputerInfo						uname -a / uptime
+Compress					N/A							Compress-Archive						tar -czvf [tar.gz] [dir]
+Extract						N/A							Expand-Archive							tar -xzvf [tar.gz]
+Transfer						N/A							N/A										scp [file] [user]@[host]:[dest]

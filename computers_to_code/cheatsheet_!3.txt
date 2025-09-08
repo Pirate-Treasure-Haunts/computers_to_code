@@ -1,0 +1,103 @@
+Modularization of Python Code
+Python modularization is cross-platform.
+Project Structure
+myproject/
+├── main.py
+├── utils/
+│   ├── init.py
+│   └── math.py
+└── models.py
+Defining Modules
+
+utils/math.py: Define functions.
+utils/init.py: from .math import add (re-export).
+
+Importing
+
+import utils.math
+from utils import add
+
+Cross-File Imports
+
+Same level: from models import User
+Subfolder: from utils.math import add
+Relative: from ..other import func
+
+Reusability
+Use init.py for exports.
+Testing
+tests/test_math.py: from utils.math import add
+Install as Package
+setup.py + pip install -e .
+
+Making C++ Code Modular
+C++ modularization is cross-platform, but compilation varies.
+Project Structure
+myproject/
+├── main.cpp
+├── math/
+│   ├── math.h
+│   └── math.cpp
+└── utils.h
+Headers (.h)
+#pragma once
+int add(int a, int b);
+Implementations (.cpp)
+#include "math.h"
+int add(int a, int b) { return a + b; }
+Usage in main.cpp
+#include "math/math.h"
+add(2, 3);
+Compilation
+Windows: g++ main.cpp math/math.cpp -o prog
+Linux/macOS: g++ main.cpp math/math.cpp -o prog
+Or use CMake.
+Include Guards
+#ifndef MATH_H ... #endif
+Namespaces
+namespace math { int add(...); }
+
+Preparation Through to Release (Rust Style)
+Rust is cross-platform.
+Setup
+Install Rust (rustup.rs).
+Create Project
+cargo new <project></project>
+Coding
+Edit src/main.rs, Cargo.toml.
+Build/Run
+cargo build (first time)
+cargo run
+Release
+Cargo.toml:
+[profile.release]
+lto = true
+panic = "abort"
+codegen-units = 1
+cargo build --release
+Strip (Optional)
+Windows: Use upx or manual.
+Linux: strip target/release/<name>
+<strong>macOS</strong>: strip target/release/<name></name></name>
+
+Code Modularization in Rust
+Rust modularization is cross-platform.
+Project Structure
+src/
+├── main.rs
+├── lib.rs
+├── utils/
+│   ├── mod.rs
+│   └── math.rs
+└── models.rs
+Defining Modules
+main.rs: mod utils; mod models;
+utils/mod.rs: pub mod math;
+utils/math.rs: pub fn add(a: i32, b: i32) -> i32 { a + b }
+Using
+use utils::math::add;
+add(2, 3);
+lib.rs for Crates
+pub mod utils;
+Tips
+Use pub, crate::, #[cfg(test)].

@@ -1,0 +1,80 @@
+Ultra God Commands - Deep System Kill, Unlock, Reset, Hidden Admin Tricks (Linux/macOS)
+SECTION 1: DEEP PROCESS KILLING & STUCK FIXES
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Kill zombies: ps -eo pid,ppid,state,cmd | grep ' Z ' | awk '{print $1}' | xargs kill -9
+Kill process tree: pstree -p <pid> | grep -o '([0-9]\+)' | grep -o '[0-9]\+' | xargs kill -9
+Kill background jobs: jobs -p | xargs kill -9
+Kill frozen GUI: xkill (click window)
+Reset terminal: reset
+
+SECTION 2: FILE & FOLDER UNLOCKING
+Linux (Debian/Ubuntu/Arch)/macOS
+
+List lock holders: lsof | grep <filename>
+Kill lock holders: lsof | grep <filename> | awk '{print $2}' | xargs kill -9
+Unlock mounted device: fuser -mv /mount/point; fuser -km /mount/point
+
+SECTION 3: SERVICE & DAEMON NUKES
+Linux (Debian/Ubuntu)
+
+Restart service: systemctl restart <service>
+Force stop: systemctl stop <service>; pkill -9 -f <service>
+Kill user sessions: pkill -u <username>
+
+Linux (Arch)
+
+Restart service: systemctl restart <service>
+Force stop: systemctl stop <service>; pkill -9 -f <service>
+Kill user sessions: pkill -u <username>
+
+macOS
+
+Restart service: launchctl unload <service>.plist; launchctl load <service>.plist
+Force stop: launchctl stop <service>; pkill -9 -f <service>
+Kill user sessions: pkill -u <username>
+
+SECTION 4: NETWORK HARD OVERRIDES
+Linux (Debian/Ubuntu)
+
+Drop connections: ip link set dev eth0 down; ip link set dev eth0 up
+Flush DNS: systemd-resolve --flush-caches
+Renew DHCP: dhclient -r && dhclient
+
+Linux (Arch)
+
+Drop connections: ip link set dev eth0 down; ip link set dev eth0 up
+Flush DNS: resolvectl flush-caches
+Renew DHCP: dhcpcd -k && dhcpcd
+
+macOS
+
+Drop connections: ifconfig en0 down; ifconfig en0 up
+Flush DNS: sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+Renew DHCP: sudo ipconfig set en0 DHCP
+
+SECTION 5: EXTREME SYSTEM RESET
+Linux (Debian/Ubuntu/Arch)
+
+Kill non-root processes: pkill -u $(whoami)
+Emergency reboot: echo b | tee /proc/sysrq-trigger
+Poweroff: poweroff -f
+
+macOS
+
+Kill non-root processes: pkill -u $(whoami)
+Emergency reboot: sudo reboot -f
+Poweroff: sudo shutdown -h now
+
+SECTION 6: STEALTH & SNEAKY MOVES
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Kill by partial match: ps aux | grep 'part_of_cmd' | grep -v grep | awk '{print $2}' | xargs kill -9
+Find hidden ports: ss -tulnp | grep -E ':.* '
+Find deleted binaries: lsof -nP +c 15 | grep deleted
+
+SECTION 7: BOOT LEVEL UNLOCKS
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Remount root writable: mount -o remount,rw /
+Reset password: passwd <username>

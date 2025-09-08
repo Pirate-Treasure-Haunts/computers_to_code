@@ -1,0 +1,248 @@
+Python Virtual Environments Setup and Usage
+Creating and Activating Venv
+Windows 10/11 (CMD)
+
+Create: python -m venv venv
+Activate: venv\Scripts\activate.bat
+Deactivate: deactivate
+
+Windows 10/11 (PowerShell)
+
+Create: python -m venv venv
+Activate: .\venv\Scripts\Activate.ps1 (Allow execution if blocked: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser)
+Deactivate: deactivate
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Create: python3 -m venv venv
+Activate: source venv/bin/activate
+Deactivate: deactivate
+
+Installing Packages
+All Platforms
+
+Install from requirements.txt: pip install -r requirements.txt
+Install specific: pip install package_name
+List installed: pip list
+Generate requirements.txt: pip freeze > requirements.txt
+
+requirements.txt Format
+
+Plain text file, one package per line: package_name==version or package_name for latest.
+Comments: # comment
+Ranges: requests>=2.24.0,<3.0.0
+Editable: -e .
+Example:
+textrequests==2.32.3
+numpy>=1.19.5
+# Comment here
+
+
+
+C++ VSCode Compile Time Cheatsheet
+Basic Compilation (VSCode with CMake Extension)
+Windows 10/11
+
+Install VSCode, CMake, MinGW (g++). Add to PATH.
+In VSCode: Ctrl+Shift+P > CMake: Configure.
+Build: Ctrl+Shift+P > CMake: Build.
+Command line: mkdir build; cd build; cmake .. -G "MinGW Makefiles"; cmake --build .
+
+Linux (Debian/Ubuntu/Arch)
+
+Install VSCode, cmake, g++.
+In VSCode: Ctrl+Shift+P > CMake: Configure.
+Build: Ctrl+Shift+P > CMake: Build.
+Command line: mkdir build; cd build; cmake ..; cmake --build . or make.
+
+macOS
+
+Install VSCode, Xcode (clang++), cmake (brew install cmake).
+In VSCode: Ctrl+Shift+P > CMake: Configure.
+Build: Ctrl+Shift+P > CMake: Build.
+Command line: mkdir build; cd build; cmake .. -G "Xcode"; cmake --build ..
+
+Advanced Compilation
+All Platforms
+
+Release: cmake --build . --config Release
+Debug verbose: cmake --build . --config Debug --verbose
+Clean: cmake --build . --target clean
+Install: cmake --build . --target install (if CMakeLists.txt configured).
+
+CMakeLists.txt Example
+textcmake_minimum_required(VERSION 3.10)
+project(MyProject)
+add_executable(myprogram main.cpp math/math.cpp)
+
+Preparing Directory for C++ Builds
+Clear Build Directory
+Windows 10/11 (CMD)
+cd C:\project\build
+del /Q /S /F *
+rmdir /Q /S .
+mkdir C:\project\build
+cd C:\project\build
+Windows 10/11 (PowerShell)
+cd C:\project\build
+Remove-Item -Recurse -Force *
+cd ..; Remove-Item -Recurse -Force build; New-Item -ItemType Directory build; cd build
+Linux (Debian/Ubuntu/Arch)/macOS
+cd /path/to/project/build
+rm -rf *
+cd ..; rm -rf build; mkdir build; cd build
+Clear CMake Cache
+Windows 10/11
+Remove-Item -Recurse -Force $env:USERPROFILE\AppData\Local\CMake (PowerShell)
+or rmdir /Q /S %USERPROFILE%\AppData\Local\CMake (CMD)
+Linux (Debian/Ubuntu/Arch)/macOS
+rm -rf ~/.cmake
+Clear VS Cache (if using VSCode/Visual Studio)
+Windows 10/11
+rmdir /Q /S C:\project\.vs
+rmdir /Q /S "%USERPROFILE%\AppData\Local\Microsoft\VisualStudio\17.0*"
+Linux/macOS
+rm -rf ~/.vscode (for VSCode extensions/cache; selective).
+Clear Temp Files
+Windows 10/11
+del /Q /S /F %TEMP%\*
+Linux (Debian/Ubuntu/Arch)/macOS
+rm -rf /tmp/*
+Verify
+All Platforms
+List directories: dir build (Windows CMD) / ls build (others).
+Example Build After Clean
+Windows 10/11
+cmake .. -G "Visual Studio 17 2022" -A x64
+cmake --build . --config Debug --verbose > build_log.txt
+Linux/macOS
+cmake ..
+cmake --build . --config Debug --verbose > build_log.txt
+
+GitHub Repository Explanation
+GitHub is platform-agnostic (web-based). Access via browser or Git CLI.
+What is a Repository?
+Cloud folder for code, docs, history. Tracks changes via Git.
+Key Files/Folders
+
+README.md: Project overview (Markdown).
+src/: Source code.
+docs/: Documentation.
+.gitignore: Ignore files (e.g., temp, secrets).
+LICENSE: Usage rules.
+
+Workflow
+All Platforms (Git CLI)
+
+Commit: git commit -m "message"
+Push: git push origin main
+Pull: git pull
+Fork: Via GitHub web; then git clone <fork-url>.
+
+Why Use?
+Version control, collaboration, sharing, portfolio.
+Install Git: winget (Windows), apt/pacman (Linux), brew (macOS).
+
+Modularization of Python Code
+Python modularization is cross-platform.
+Project Structure
+textmyproject/
+├── main.py
+├── utils/
+│   ├── __init__.py
+│   └── math.py
+└── models.py
+Defining Modules
+
+utils/math.py: Define functions.
+utils/init.py: from .math import add (re-export).
+
+Importing
+
+import utils.math
+from utils import add
+
+Cross-File Imports
+
+Same level: from models import User
+Subfolder: from utils.math import add
+Relative: from ..other import func
+
+Reusability
+Use init.py for exports.
+Testing
+tests/test_math.py: from utils.math import add
+Install as Package
+setup.py + pip install -e .
+
+Making C++ Code Modular
+C++ modularization is cross-platform, but compilation varies.
+Project Structure
+textmyproject/
+├── main.cpp
+├── math/
+│   ├── math.h
+│   └── math.cpp
+└── utils.h
+Headers (.h)
+#pragma once
+int add(int a, int b);
+Implementations (.cpp)
+#include "math.h"
+int add(int a, int b) { return a + b; }
+Usage in main.cpp
+#include "math/math.h"
+add(2, 3);
+Compilation
+Windows: g++ main.cpp math/math.cpp -o prog
+Linux/macOS: g++ main.cpp math/math.cpp -o prog
+Or use CMake.
+Include Guards
+#ifndef MATH_H ... #endif
+Namespaces
+namespace math { int add(...); }
+
+Preparation Through to Release (Rust Style)
+Rust is cross-platform.
+Setup
+Install Rust (rustup.rs).
+Create Project
+cargo new <project>
+Coding
+Edit src/main.rs, Cargo.toml.
+Build/Run
+cargo build (first time)
+cargo run
+Release
+Cargo.toml:
+text[profile.release]
+lto = true
+panic = "abort"
+codegen-units = 1
+cargo build --release
+Strip (Optional)
+Windows: Use upx or manual.
+Linux: strip target/release/<name>
+macOS: strip target/release/<name>
+
+Code Modularization in Rust
+Rust modularization is cross-platform.
+Project Structure
+textsrc/
+├── main.rs
+├── lib.rs
+├── utils/
+│   ├── mod.rs
+│   └── math.rs
+└── models.rs
+Defining Modules
+main.rs: mod utils; mod models;
+utils/mod.rs: pub mod math;
+utils/math.rs: pub fn add(a: i32, b: i32) -> i32 { a + b }
+Using
+use utils::math::add;
+add(2, 3);
+lib.rs for Crates
+pub mod utils;
+Tips
+Use pub, crate::, #[cfg(test)].

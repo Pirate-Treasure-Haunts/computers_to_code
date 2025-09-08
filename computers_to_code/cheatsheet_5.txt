@@ -1,0 +1,117 @@
+Terminal God Commands - Ultimate Control, Kill Spells, Permissions, Port Tricks
+SECTION 1: SCRIPT PERMISSIONS
+Windows 10/11 (CMD)
+
+No direct equivalent for chmod; scripts (.bat, .cmd, .ps1) are executable by default if extensions are recognized.
+Verify permissions: dir /a *.bat *.ps1
+Grant access (if needed): icacls script.bat /grant %username%:F
+
+Windows 10/11 (PowerShell)
+
+Set execution policy (if blocked): Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+Verify permissions: Get-ChildItem -Force *.ps1
+Grant access: $acl = Get-Acl script.ps1; $acl.SetAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule($env:USERNAME,"FullControl","Allow"))); Set-Acl script.ps1 $acl
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Make all scripts executable: chmod +x *.sh *.py
+Make specific script executable: chmod +x deploy.sh or chmod +x proxy-test-app.py
+Verify permissions: ls -la *.sh *.py
+
+SECTION 2: ESCALATING KILL SPELLS
+Windows 10/11 (CMD)
+
+Polite kill: taskkill /PID <pid>
+Firm kill: taskkill /PID <pid> /T
+Aggressive kill: taskkill /PID <pid> /F
+Kill by name: taskkill /IM appname.exe /F
+Kill by port (8080): netstat -ano | findstr :8080 (get PID, then taskkill /PID <pid> /F)
+No direct process group kill; use PowerShell for advanced cases.
+
+Windows 10/11 (PowerShell)
+
+Polite kill: Stop-Process -Id <pid>
+Firm kill: Stop-Process -Id <pid> -Force
+Aggressive kill: Stop-Process -Id <pid> -Force
+Kill by name: Stop-Process -Name "appname" -Force
+Kill by port (8080): Get-NetTCPConnection -LocalPort 8080 | Select-Object OwningProcess | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+Kill by partial name: Get-Process | Where-Object {$_.Name -like "*pattern*"} | Stop-Process -Force
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Polite kill: kill <pid>
+Firm kill: kill -TERM <pid>
+Aggressive kill: kill -9 <pid>
+Kill by process group: kill -9 -<pgid>
+Kill by name: pkill -9 -f "pattern"
+Kill by port (8080): lsof -t -i:8080 | xargs kill -9
+Fuser kill: fuser -k 8080/tcp
+Regex kill: pkill -9 -f "8080"
+
+SECTION 3: PORT & NETWORK COMMANDS
+Windows 10/11 (CMD)
+
+Find processes on port (8080): netstat -ano | findstr :8080
+Kill by port: for /f "tokens=5" %p in ('netstat -ano ^| findstr :8080') do taskkill /PID %p /F
+
+Windows 10/11 (PowerShell)
+
+Find processes on port (8080): Get-NetTCPConnection -LocalPort 8080
+Kill by port: Get-NetTCPConnection -LocalPort 8080 | Select-Object OwningProcess | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+Find processes on port: ss -tulpn | grep :8080 or netstat -tulpn | grep :8080
+Kill by port: ss -tulpn | grep :8080 | awk '{print $7}' | cut -d',' -f2 | cut -d'=' -f2 | xargs kill -9 or netstat -tulpn | grep :8080 | awk '{print $7}' | cut -d'/' -f1 | xargs kill -9
+
+SECTION 4: SYSTEM RESET NUKE OPTIONS
+Windows 10/11 (CMD)
+
+Restart networking: netsh interface set interface "Ethernet" admin=disabled && netsh interface set interface "Ethernet" admin=enabled
+Reboot: shutdown /r /t 0
+
+Windows 10/11 (PowerShell)
+
+Restart networking: Disable-NetAdapter -Name "Ethernet"; Enable-NetAdapter -Name "Ethernet"
+Reboot: Restart-Computer -Force
+
+Linux (Debian/Ubuntu)
+
+Restart networking: systemctl restart networking (Debian/Ubuntu) or nmcli networking off && nmcli networking on
+Reboot: reboot
+
+Linux (Arch)
+
+Restart networking: systemctl restart NetworkManager
+Reboot: reboot
+
+macOS
+
+Restart networking: sudo ifconfig en0 down && sudo ifconfig en0 up (replace en0 with your interface)
+Reboot: sudo reboot
+
+SECTION 5: BONUS POWER TRICKS
+Windows 10/11 (CMD)
+
+View open files: handle64.exe -p <pid> (requires Sysinternals handle.exe)
+Show listening ports: netstat -ano | findstr LISTENING
+Monitor usage: tasklist /v
+Kill zombies: tasklist /FI "STATUS eq NOT RESPONDING" /F
+Watch port: for /l %i in (1,1,9999) do @netstat -ano | findstr :8080 & timeout /t 2
+
+Windows 10/11 (PowerShell)
+
+View open files: Get-Process -Id <pid> | Select-Object -ExpandProperty Modules
+Show listening ports: Get-NetTCPConnection -State Listen
+Monitor usage: Get-Process | Sort-Object CPU -Descending
+Kill zombies: Get-Process | Where-Object {$_.Responding -eq $false} | Stop-Process -Force
+Watch port: while ($true) { Get-NetTCPConnection -LocalPort 8080; Start-Sleep -Seconds 2 }
+
+Linux (Debian/Ubuntu/Arch)/macOS
+
+View open files: lsof -p <pid>
+Show listening ports: ss -tulwn
+Monitor usage: top or htop (if installed)
+Kill zombies: ps aux | grep 'Z' | awk '{print $2}' | xargs kill -9
+Watch port: watch "ss -tulpn | grep :8080"
+Clear terminal: clear

@@ -1,0 +1,79 @@
+C++ VSCode Compile Time Cheatsheet
+Basic Compilation (VSCode with CMake Extension)
+Windows 10/11
+
+Install VSCode, CMake, MinGW (g++). Add to PATH.
+In VSCode: Ctrl+Shift+P > CMake: Configure.
+Build: Ctrl+Shift+P > CMake: Build.
+Command line: mkdir build; cd build; cmake .. -G "MinGW Makefiles"; cmake --build .
+
+Linux (Debian/Ubuntu/Arch)
+
+Install VSCode, cmake, g++.
+In VSCode: Ctrl+Shift+P > CMake: Configure.
+Build: Ctrl+Shift+P > CMake: Build.
+Command line: mkdir build; cd build; cmake ..; cmake --build . or make.
+
+macOS
+
+Install VSCode, Xcode (clang++), cmake (brew install cmake).
+In VSCode: Ctrl+Shift+P > CMake: Configure.
+Build: Ctrl+Shift+P > CMake: Build.
+Command line: mkdir build; cd build; cmake .. -G "Xcode"; cmake --build .
+
+Advanced Compilation
+All Platforms
+
+Release: cmake --build . --config Release
+Debug verbose: cmake --build . --config Debug --verbose
+Clean: cmake --build . --target clean
+Install: cmake --build . --target install (if CMakeLists.txt configured).
+
+CMakeLists.txt Example
+cmake_minimum_required(VERSION 3.10)
+project(MyProject)
+add_executable(myprogram main.cpp math/math.cpp)
+
+Preparing Directory for C++ Builds
+Clear Build Directory
+Windows 10/11 (CMD)
+cd C:\project\build
+del /Q /S /F *
+rmdir /Q /S .
+mkdir C:\project\build
+cd C:\project\build
+Windows 10/11 (PowerShell)
+cd C:\project\build
+Remove-Item -Recurse -Force *
+cd ..; Remove-Item -Recurse -Force build; New-Item -ItemType Directory build; cd build
+Linux (Debian/Ubuntu/Arch)/macOS
+cd /path/to/project/build
+rm -rf *
+cd ..; rm -rf build; mkdir build; cd build
+Clear CMake Cache
+Windows 10/11
+Remove-Item -Recurse -Force $env:USERPROFILE\AppData\Local\CMake (PowerShell)
+or rmdir /Q /S %USERPROFILE%\AppData\Local\CMake (CMD)
+Linux (Debian/Ubuntu/Arch)/macOS
+rm -rf ~/.cmake
+Clear VS Cache (if using VSCode/Visual Studio)
+Windows 10/11
+rmdir /Q /S C:\project.vs
+rmdir /Q /S "%USERPROFILE%\AppData\Local\Microsoft\VisualStudio\17.0*"
+Linux/macOS
+rm -rf ~/.vscode (for VSCode extensions/cache; selective).
+Clear Temp Files
+Windows 10/11
+del /Q /S /F %TEMP%*
+Linux (Debian/Ubuntu/Arch)/macOS
+rm -rf /tmp/*
+Verify
+All Platforms
+List directories: dir build (Windows CMD) / ls build (others).
+Example Build After Clean
+Windows 10/11
+cmake .. -G "Visual Studio 17 2022" -A x64
+cmake --build . --config Debug --verbose > build_log.txt
+Linux/macOS
+cmake ..
+cmake --build . --config Debug --verbose > build_log.txt

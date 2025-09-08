@@ -1,0 +1,42 @@
+Cheat Sheet 3: Scripting & Automation
+Script File Basics
+Windows CMD: .bat/.cmd, script.bat.
+PowerShell: .ps1, .\script.ps1.
+Linux (Debian/Ubuntu/Arch)/macOS: .sh, chmod +x script.sh; ./script.sh.
+Variables
+CMD: set VAR=Value; echo %VAR%.
+PowerShell: $var="Value"; Write-Output $var.
+Linux/macOS: VAR="Value"; echo $VAR.
+Loops
+CMD: for /L %%i in (1,1,5) do (echo %%i).
+PowerShell: for ($i=1; $i -le 5; $i++) {Write-Output $i}.
+Linux/macOS: for i in {1..5}; do echo $i; done.
+While Loops
+CMD: set /a i=0 :loop if %i%==5 goto end echo %i% set /a i+=1 goto loop :end.
+PowerShell: $i=0; while ($i -lt 5) {Write-Output $i; $i++}.
+Linux/macOS: i=0; while [ $i -lt 5 ]; do echo $i; i=$((i+1)); done.
+Until Loops
+Linux/macOS only: i=0; until [ $i -ge 5 ]; do echo $i; i=$((i+1)); done.
+Conditional Statements
+CMD: if "%VAR%"=="Value" (echo Match) else (echo No Match).
+PowerShell: if ($var -eq "Value") {Write-Output "Match"} else {"No Match"}.
+Linux/macOS: if [ "$VAR" = "Value" ]; then echo "Match"; else echo "No Match"; fi.
+Functions
+CMD: :myFunction echo Function goto :eof call :myFunction.
+PowerShell: function My-Function {Write-Output "Function"} My-Function.
+Linux/macOS: my_function() { echo "Function"; } my_function.
+Arrays
+PowerShell: $colors=@("Red","Green","Blue"); $colors[0].
+Linux/macOS: colors=("Red" "Green" "Blue"); echo ${colors[0]}.
+CMD: No native.
+Automation Examples
+Batch Rename:
+Linux/macOS: for file in *.txt; do mv "$file" "${file%.txt}.md"; done.
+PowerShell: Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '.txt','.md' }.
+Scheduling:
+CMD: schtasks /create /tn "Task" /tr "script.bat" /sc daily /st 09:00.
+Linux/macOS: crontab -e; 0 9 * * * /path/script.sh.
+Tips
+CMD: setlocal enabledelayedexpansion for loops.
+PowerShell: Get-Help.
+Linux/macOS: man pages.

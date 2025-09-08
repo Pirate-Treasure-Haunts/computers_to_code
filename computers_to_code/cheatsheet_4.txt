@@ -1,0 +1,13 @@
+Cheat Sheet 4: Networking, System Monitoring & Project Exporting
+Networking Commands
+Windows CMD: ipconfig; ipconfig /all; ping [host]; tracert [host]; netstat -an; nslookup [domain].
+PowerShell: Get-NetIPAddress; Test-Connection [host]; Test-NetConnection [host]; Resolve-DnsName [domain]; Get-NetTCPConnection.
+Linux (Debian/Ubuntu/Arch)/macOS: ifconfig or ip addr; ping [host]; traceroute [host]; netstat -tuln; dig [domain] or nslookup [domain].
+System Monitoring
+Windows CMD: tasklist; taskkill /PID [pid]; systeminfo; chkdsk.
+PowerShell: Get-Process; Stop-Process -Id [pid]; Get-ComputerInfo; Get-EventLog -LogName System.
+Linux (Debian/Ubuntu/Arch)/macOS: top; htop (if installed); ps aux; kill [pid]; df -h; free -h; uptime.
+Project Exporting
+Windows CMD: xcopy [source] [dest] /E /H /C /I; robocopy [source] [dest] /E.
+PowerShell: Compress-Archive -Path [source] -DestinationPath [zip]; Expand-Archive -Path [zip] -DestinationPath [dest]; Copy-Item [source] [dest] -Recurse.
+Linux (Debian/Ubuntu/Arch)/macOS: tar -czvf [tar.gz] [dir]; tar -xzvf [tar.gz]; scp [file] [user]@[host]:[dest]; rsync -avz [source] [user]@[host]:[dest].
